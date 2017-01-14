@@ -1,0 +1,138 @@
+#!/bin/bash
+banner () {
+  echo ""
+  echo ""
+  echo ""
+  echo ""
+  echo ""
+  echo ""
+  echo "Be welcome to the ..."
+  echo ""
+  echo ".d88888b.            d8b";
+  echo "d88P\" \"Y88b          Y8P";
+  echo "888     888";
+  echo "888     888 88888b.  888  .d88b.  88888b.";
+  echo "888     888 888 \"88b 888 d88\"\"88b 888 \"88b";
+  echo "888     888 888  888 888 888  888 888  888";
+  echo "Y88b. .d88P 888  888 888 Y88..88P 888  888";
+  echo  " \"Y88888P\"  888  888 888  \"Y88P\"  888  888";
+  echo "";
+  echo "";
+  echo "                                                                 888";
+  echo " .d8888b.  888                        888                        888";
+  echo "d88P  Y88b 888                        888                        888";
+  echo "888    888 888                        888                        888";
+  echo "888        88888b.   .d88b.   .d8888b 888  888  .d88b.  888d888  888";
+  echo "888        888  88b d8P  Y8b d88P\"    888 .88P d8P  Y8b 888P     888";
+  echo "888    888 888  888 88888888 888      888888K  88888888 888 ";
+  echo "Y88b  d88P 888  888 Y8b.     Y88b.    888 \"88b Y8b.     888      d8p";
+  echo " \"Y8888P\"  888  888  \"Y8888   \"Y8888P 888  888  \"Y8888  888      Y8P"
+  echo ""
+  sleep 2;
+  echo "" && sleep 0.1
+  echo "" && sleep 0.1
+  echo "" && sleep 0.1
+  echo "" && sleep 0.1
+  echo "" && sleep 0.1
+  echo "" && sleep 0.1
+  echo "" && sleep 0.1
+  echo "" && sleep 0.1
+  echo "Developer: Jesus 'Jay-C'"
+  echo "" && sleep 0.1
+  echo "GitHub page: https://github.com/JesusFromHellz"
+  echo "" && sleep 0.1
+  echo "" && sleep 0.1
+  echo "" && sleep 0.1
+  echo "" && sleep 0.1
+}
+cutc () {
+  echo $PATH | cut -d: -f $main >> .cktp;
+  lt=$(tail -1 .cktp);
+  if [ "$lt" != "" ]; then
+    ((++main));
+    echo 'mais';
+    cutc;
+    else
+      echo 'else'
+      ls $(cat $(pwd)/.cktp 2> /dev/null) 2> /dev/null | grep -i -w 'tor\|torsocks' > .ckt
+  fi
+}
+cktp () {
+  echo "Enumerando os Paths ..."; echo "";
+  main=1
+  tmpe=$(ls -d tmp 2> /dev/null)
+  if [ "$tmpe" != "tmp" ]; then
+    printf "Criando sub-diretório tmp ...\n\n";
+    mkdir tmp/
+    else
+      sleep 0
+  fi
+  cd tmp/
+  tmpc=$(ls .cktp 2> /dev/null)
+  if [ "$tmpc" != ".cktp" ]; then
+    printf "Criando arquivo temporário .cktp ...\n\n"
+    touch .cktp;
+    cutc;
+    else
+      rm .cktp;
+      touch .cktp;
+      cutc;
+  fi
+}
+checktor () {
+ echo "O Tor está instalado no seu computador? (OBS: Daemon, não Browser) (Y/n)"
+ read q1
+ q1=$(echo $q1|tr A-Z a-z)
+ if [ "$q1" == "y" ] || [ "$q1" == "" ]; then
+  oe=$(cat tmp/.ckt 2> /dev/null | grep -i -w 'tor\|torsocks')
+  if [ "$oe" == "" ]; then
+    cktp;
+  else
+    echo 'Programas necessários encontrados no computador.';
+  fi
+  elif [ "$q1" == "n" ]; then
+  echo "Você precisa instalar o Tor para usar essa função."; exit 0
+  else
+    echo " "; echo "Digite Y ou N"; echo ""; checktor
+  fi
+
+}
+linkorg () {
+  link="$*"
+
+  cat "$link" | sed -r 's/^(.*)http:\/\/(.*\.onion).*$/\2/' | sed '/^$/d' | sed -n '/\.onion/p' | sed -r 's/^(.*)\.(.*\.onion).*$/\2/' | sed -r 's/^(.*)-.*(.*\.onion).*$/\2/' | sed '/^.onion$/d'
+}
+learnpar () {
+  echo "$1 parametro 01"
+  echo "$2 parametro 02"
+  echo "$3 parametro 03"
+}
+ps () {
+  link="$*"
+  ping $2
+}
+help () {
+  echo ''
+  echo 'Olá! Seja bem-vindo(a) ao tópico de ajuda do Onion Checker.'
+  echo 'Com esse software você poderá checar se links onion estão '
+  echo 'funcionando. Abaixo você pode ver a lista de comandos dis-'
+  echo 'poníveis.'
+  echo ''
+  echo '-h ou --help            Mostra essa mensagem de ajuda'
+  echo '-l ou --link-org        Organiza os links de um arquivo'
+  echo '-b ou --banner          Exibe o banner e sai'
+}
+
+if [ "$*" == "-h" ] || [ "$*" == "--help" ] || [ "$*" == "" ];
+  then
+    help;
+  else
+    case "$1" in
+    -l | --link-org       ) banner; linkorg "$2"; shift 2   ;;
+    -b | --banner         ) banner; exit 0;  shift;         ;;
+    -c | --check-tor      ) banner; checktor shift;         ;;
+    -L | --learn-par      ) banner; learnpar shift;         ;;
+    -p | --ping           ) ps    ; shift;                  ;;
+
+    esac
+fi
