@@ -1,5 +1,28 @@
 #!/bin/bash
-banner () {
+
+################################################################################
+#                      ____        _                                           #
+#                     / __ \      (_)                                          #
+#                    | |  | |_ __  _  ___  _ __                                #
+#                    | |  | | '_ \| |/ _ \| '_ \                               #
+#                    | |__| | | | | | (_) | | | |                              #
+#                     \____/|_| |_|_|\___/|_|_|_|                              #
+#                    / ____| |             | |                                 #
+#                   | |    | |__   ___  ___| | _____ _ __                      #
+#                   | |    | '_ \ / _ \/ __| |/ / _ \ '__|                     #
+#                   | |____| | | |  __/ (__|   <  __/ |                        #
+#                    \_____|_| |_|\___|\___|_|\_\___|_|                        #
+#                                                                              #
+# Easily organize your file with multiple links from Tor Network and test      #
+# if they are online.                                                          #
+# Developer: Jesus 'Jay-C'                                                     #
+# GitHub Page: https://github.com/JesusFromHellz/                              #
+# Sistema base: Debian Jessie                                                  #
+# Dependências: tor   torsocks  curl                                           #
+################################################################################
+
+
+banner () { #Simplesmente exibe o banner da aplicação
   echo ""
   echo ""
   echo ""
@@ -45,94 +68,67 @@ banner () {
   echo "" && sleep 0.1
   echo "" && sleep 0.1
 }
-cutc () {
-  echo $PATH | cut -d: -f $main >> .cktp;
-  lt=$(tail -1 .cktp);
-  if [ "$lt" != "" ]; then
-    ((++main));
-    echo 'mais';
-    cutc;
-    else
-      echo 'else'
-      ls $(cat $(pwd)/.cktp 2> /dev/null) 2> /dev/null | grep -i -w 'tor\|torsocks' > .ckt
-  fi
-}
-cktp () {
-  echo "Enumerando os Paths ..."; echo "";
-  main=1
-  tmpe=$(ls -d tmp 2> /dev/null)
-  if [ "$tmpe" != "tmp" ]; then
-    printf "Criando sub-diretório tmp ...\n\n";
-    mkdir tmp/
-    else
-      sleep 0
-  fi
-  cd tmp/
-  tmpc=$(ls .cktp 2> /dev/null)
-  if [ "$tmpc" != ".cktp" ]; then
-    printf "Criando arquivo temporário .cktp ...\n\n"
-    touch .cktp;
-    cutc;
-    else
-      rm .cktp;
-      touch .cktp;
-      cutc;
-  fi
-}
-checktor () {
- echo "O Tor está instalado no seu computador? (OBS: Daemon, não Browser) (Y/n)"
- read q1
- q1=$(echo $q1|tr A-Z a-z)
- if [ "$q1" == "y" ] || [ "$q1" == "" ]; then
-  oe=$(cat tmp/.ckt 2> /dev/null | grep -i -w 'tor\|torsocks')
-  if [ "$oe" == "" ]; then
-    cktp;
+#Início das variáveis globais
+tore=""
+#Fim das variáveis globais
+checktor () { #Checa se o tor está presente no computador.
+  tor --help 1> /dev/null 2> /dev/null
+  if [ "$?" == "127" ]; then
+    tore="n"
   else
-    echo 'Programas necessários encontrados no computador.';
+    tore="y"
   fi
-  elif [ "$q1" == "n" ]; then
-  echo "Você precisa instalar o Tor para usar essa função."; exit 0
+}
+stor () { #Exibe a existência ou não do Tor para o usuário
+  if [ "$tore" == "n" ]; then
+    echo -e "\nQue pena, o Tor não está instalado no seu computador. "
+    echo -e "Para instalá-lo, digite:"
+    echo -e "apt-get install tor\n"
   else
-    echo " "; echo "Digite Y ou N"; echo ""; checktor
+    echo -e "\nParabéns, o Tor está corretamente instalado no seu "
+    echo -e "computador. Assim sendo, poderá usufruir 100% desse"
+    echo -e "programa.\n"
   fi
+}
+linkorg () { #Organiza um arquivo contendo links passados pelo usuário
+  link="$1" #Parametro 01 da flag, arquivo origem
+  dest="$2"  #Parametro 02 da flag, arquivo destino
+  if [ "$link" == "" ]; then
+      echo "Uso: `basename $0` [-l|--link-org] [arquivo a ser organizado] \
+   [arquivo destino]"
+   else
+    banner;
+    cat "$link" | sed -r 's/^(.*)http:\/\/(.*\.onion).*$/\2/' | sed '/^$/d' |\
+    sed -n '/\.onion/p' | sed -r 's/^(.*)\.(.*\.onion).*$/\2/' |\
+    sed -r 's/^(.*)-.*(.*\.onion).*$/\2/' | sed '/^.onion$/d' > "$dest"
+  fi
+}
 
-}
-linkorg () {
-  link="$*"
-
-  cat "$link" | sed -r 's/^(.*)http:\/\/(.*\.onion).*$/\2/' | sed '/^$/d' | sed -n '/\.onion/p' | sed -r 's/^(.*)\.(.*\.onion).*$/\2/' | sed -r 's/^(.*)-.*(.*\.onion).*$/\2/' | sed '/^.onion$/d'
-}
-learnpar () {
-  echo "$1 parametro 01"
-  echo "$2 parametro 02"
-  echo "$3 parametro 03"
-}
-ps () {
-  link="$*"
-  ping $2
-}
-help () {
-  echo ''
+help () { #Imprime ajuda, padrão exibido se nenhuma flag é passada pro comando
+  echo '' #ou se a flag -h | --help é passada.
   echo 'Olá! Seja bem-vindo(a) ao tópico de ajuda do Onion Checker.'
   echo 'Com esse software você poderá checar se links onion estão '
   echo 'funcionando. Abaixo você pode ver a lista de comandos dis-'
   echo 'poníveis.'
+  echo 'Se algum comando precisar de argumento e não for dado, o  '
+  echo 'mesmo apresentará a mensagem do uso correto.'
   echo ''
-  echo '-h ou --help            Mostra essa mensagem de ajuda'
-  echo '-l ou --link-org        Organiza os links de um arquivo'
-  echo '-b ou --banner          Exibe o banner e sai'
+  echo '-h ou --help            Mostra essa mensagem de ajuda;'
+  echo '-l ou --link-org        Organiza os links de um arquivo;'
+  echo '-b ou --banner          Exibe o banner e sai;'
+  echo '-c ou --check-tor       Checa a existência do Tor no computador;'
+  echo ''
 }
 
+#Testes condicionais de flags, acerca do uso do programa
 if [ "$*" == "-h" ] || [ "$*" == "--help" ] || [ "$*" == "" ];
   then
     help;
   else
     case "$1" in
-    -l | --link-org       ) banner; linkorg "$2"; shift 2   ;;
-    -b | --banner         ) banner; exit 0;  shift;         ;;
-    -c | --check-tor      ) banner; checktor shift;         ;;
-    -L | --learn-par      ) banner; learnpar shift;         ;;
-    -p | --ping           ) ps    ; shift;                  ;;
+    -l | --link-org       ) linkorg "$2" "$3"; shift 2             ;;
+    -b | --banner         ) banner; exit 0;  shift;                ;;
+    -c | --check-tor      ) checktor; stor;                        ;;
 
     esac
 fi
