@@ -8,12 +8,17 @@ Script para testar se hidden services no Tor estão em fucionamento, bem como ca
 [+] **_Implementadas Totalmente:_**
 
 *Link Organization;*
-*Check Tor Installation.*
+
+*Check Tor Installation;*
+
+*Check Link with timeout set by user.*
 
 [+] **_Implementadas Parcialmente:_**
 
 
 # History 
+
+*16/01/2017 -* Função de checagem de links totalmente implementada com timeout escolhido pelo próprio usuário. Teste feito com base em função if-else com regex, bem documentada no source code; Novas implementações nos comandos de limpeza para organização de links, abrangendo gama maior nos arquivos filtrados; Documentação das novas/editadas funções.
 
 *14/01/2017 -* Função de organização de links totalmente implementada e simplificada pro usuário final. Função pra checagem da existência do Tor simplificada e adiciona retorno para exibição ao usuário. Código totalmente comentado à partir de agora.
 
