@@ -88,7 +88,7 @@ stor () { #Exibe a existência ou não do Tor para o usuário
   if [ "$tore" == "n" ]; then
     echo -e "\nQue pena, o Tor não está instalado no seu computador. "
     echo -e "Para instalá-lo, digite:"
-    echo -e "apt-get install tor\n"
+    echo -e "apt-get install tor\n (Para Linux)\n"
   else
     echo -e "\nParabéns, o Tor está corretamente instalado no seu "
     echo -e "computador. Assim sendo, poderá usufruir 100% desse"
