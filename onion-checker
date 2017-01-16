@@ -218,7 +218,8 @@ help () { #Imprime ajuda, padrão exibido se nenhuma flag é passada pro comando
   echo '-b ou --banner          Exibe o banner e sai;'
   echo '-t ou --tor-check       Checa a existência do Tor no computador;'
   echo '-c ou --check-link      Checa por links online e manda cria'
-  echo 'arquivo linksonline.txt com os títulos e links online.'
+  echo 'arquivo linkson.txt com os títulos e links online, caso'
+  echo 'nenhum nome destino seja dado.'
   echo ''
 }
 
