@@ -18,7 +18,7 @@
 # Developer: Jesus 'Jay-C'                                                     #
 # GitHub Page: https://github.com/JesusFromHellz/                              #
 # Sistema base: Debian Jessie                                                  #
-# Dependências: tor   torsocks  curl                                           #
+# Dependências: tor   torsocks  curl    coreutils                              #
 ################################################################################
 
 
@@ -69,16 +69,21 @@ banner () { #Simplesmente exibe o banner da aplicação
   echo "" && sleep 0.1
 }
 #Início das variáveis globais
-tore=""
+tore="";
+cnt="";
+a2e="";
+defvar () { #Define se o tor já está rodando
+  torr=$(ps aux | grep -w tor | grep -v grep);
+}
 #Fim das variáveis globais
-checktor () { #Checa se o tor está presente no computador.
+torcheck () { #Checa se o tor está presente no computador.
   tor --help 1> /dev/null 2> /dev/null
   if [ "$?" == "127" ]; then
     tore="n"
   else
     tore="y"
   fi
-}
+} #checa
 stor () { #Exibe a existência ou não do Tor para o usuário
   if [ "$tore" == "n" ]; then
     echo -e "\nQue pena, o Tor não está instalado no seu computador. "
@@ -96,13 +101,108 @@ linkorg () { #Organiza um arquivo contendo links passados pelo usuário
   if [ "$link" == "" ]; then
       echo "Uso: `basename $0` [-l|--link-org] [arquivo a ser organizado] \
    [arquivo destino]"
+ elif [ "$link" != "" ] && [ "$dest" == "" ]; then
+   banner;
+   cat "$link" | sed '/^$/d'  |\
+   sed -n '/................\.onion/p' |\
+   sed -r 's/^.*http:\/\/\040(.*\.onion).*$/\1/' |\
+   sed -r 's/^(.*)(................\.onion).*$/\2/' |\
+   sort -u
    else
-    banner;
-    cat "$link" | sed -r 's/^(.*)http:\/\/(.*\.onion).*$/\2/' | sed '/^$/d' |\
-    sed -n '/\.onion/p' | sed -r 's/^(.*)\.(.*\.onion).*$/\2/' |\
-    sed -r 's/^(.*)-.*(.*\.onion).*$/\2/' | sed '/^.onion$/d' > "$dest"
+     banner;
+     cat "$link" | sed '/^$/d'  |\
+     sed -n '/................\.onion/p' |\
+     sed -r 's/^.*http:\/\/\040(.*\.onion).*$/\1/' |\
+     sed -r 's/^(.*)(................\.onion).*$/\2/' |\
+     sort -u > "$dest"
+
+  #Filtragem antiga abaixo
+  #  cat "$link" | sed -r 's/^.*http:\/\/\040(.*\.onion).*$/\1/' |\
+  #  sed -r 's/^(.*\.onion).*$/\1/' | sed '/^$/d' | sed -n '/\.onion/p' |\
+  #  sed -r 's/^(.*)\.(.*\.onion).*$/\2/' |\
+  #  sed -r 's/^(.*)-.*(.*\.onion).*$/\2/' | sed '/^.onion$/d' | sort -u > "$dest"
   fi
 }
+starttor () { #Inicia o tor em segundo plano
+  tor 1> /tmp/tor 2> /dev/null &
+}
+checktorrunning () { #Checa se o tor está rodando
+  ((++counter));
+  if [ "$torr" != "" ]; then
+    rm -rf /tmp/tor 2> /dev/null; sleep 0;
+    elif [ "$counter" == "3" ]; then
+      echo 'Não foi possível iniciar o Tor, saindo ...';
+      exit 2;
+    else
+        starttor;  sleep 10; defvar; checktorrunning;
+        echo 'Inicializando o circuito Tor, por favor aguarde ...';
+        torr=$(cat /tmp/tor 2> /dev/null | grep Done)
+      if [ "$torr" != "" ]; then
+        rm -rf /tmp/tor;
+      else
+       starttor;  sleep 10; defvar; checktorrunning;
+    fi
+  fi
+
+}
+checklink () { #Checa se os links estão online
+url=$1
+destino=$2
+count=0;
+
+if [ "$url" == "" ]; then # Testa se foram dados parametros pra flag
+      echo -e "Uso: `basename $0` [-c|--check-link] [arquivo a ser testado] \
+   [arquivo destino](opcional)\n"; exit 1
+ elif [ "$destino" == "" ];then #Caso omitido o destino, dá um valor padrão
+ #Não toma um arquivo existente como destino padrão pra links on, mas off sim.
+   banner;
+   destino="linkson$(echo "$cnt").txt"; a2e=$(ls linkson$(echo "$cnt").txt 2> /dev/null)
+   while [[ "$a2e" != "" ]]; do
+     ((++cnt)); destino="linkson$(echo "$cnt").txt"; a2e=$(ls linkson$(echo "$cnt").txt 2> /dev/null)
+   done
+   echo -e "Nome destino mantido padrão, escrevendo para arquivo linkson$(echo "$cnt").txt\n"
+
+else
+  banner;
+  echo "Lendo do arquivo $url para o arquivo $destino."
+fi
+  echo 'Inicializando a checagem dos links...'
+  echo ''
+  . torsocks on 1> /dev/null #Inicia um shell com tráfego pelo tor
+  echo "Que timeout você quer para que os links sejam dados como offline?"
+  echo "Ex: [10 | 20s | 30m | 1h | 3d] para segundo, minuto, hora e dia. "
+  echo -e "Segundo é o tempo padrão, caso omitida a letra.\n"
+  tout=""
+  read tout
+  while [[ ! $tout =~ ^[0-9]+[s|m|h|d]?$ ]]; do #Checa a entrada do usuário
+  #para a configuração do timeout do curl, para dar os links como offline
+    echo -e "\n\nVocê precisa usar o padrão apresentado acima\n"; read tout
+  done
+    echo -e "\n\nIniciando a checagem dos links...\n"
+  while read url #Loop de testes em arquivo de múltiplas linhas
+  do
+      touch tmp.txt;
+      #Repassa o código de resposta do site pra variável e o conteúdo pro tmp.txt
+      urlstatus=$(timeout $(echo "$tout") curl -L -o tmp.txt --max-time 18 --write-out '%{http_code}' "$url" 2> /dev/null);
+      #Pega do tmp.txt o título encontrado
+      title=$(cat tmp.txt | grep -iPo '(?<=<title>)(.*)(?=</title>)');
+      rm -rf tmp.txt;
+      ((++count));
+      if [ "$urlstatus" == "000" ] || [ "$urlstatus" == "" ]; then #Loop teste pra link online ou offline
+        echo "[$count] O link $url está offline."
+        echo "$url - $urlstatus " >> linksoff.txt
+      else
+        echo "[$count] O link $url está funcionando..."
+      echo "$url - $urlstatus - $title" >> "$destino"
+    fi
+  done < "$url"
+  . torsocks off 1> /dev/null #Desliga o tráfego do tor nessa shell
+  rm -rf tmp.txt 2> /dev/null
+}
+
+#joinlists () {
+#  sleep 0;
+#} Função não implementada ainda
 
 help () { #Imprime ajuda, padrão exibido se nenhuma flag é passada pro comando
   echo '' #ou se a flag -h | --help é passada.
@@ -116,7 +216,9 @@ help () { #Imprime ajuda, padrão exibido se nenhuma flag é passada pro comando
   echo '-h ou --help            Mostra essa mensagem de ajuda;'
   echo '-l ou --link-org        Organiza os links de um arquivo;'
   echo '-b ou --banner          Exibe o banner e sai;'
-  echo '-c ou --check-tor       Checa a existência do Tor no computador;'
+  echo '-t ou --tor-check       Checa a existência do Tor no computador;'
+  echo '-c ou --check-link      Checa por links online e manda cria'
+  echo 'arquivo linksonline.txt com os títulos e links online.'
   echo ''
 }
 
@@ -126,9 +228,10 @@ if [ "$*" == "-h" ] || [ "$*" == "--help" ] || [ "$*" == "" ];
     help;
   else
     case "$1" in
-    -l | --link-org       ) linkorg "$2" "$3"; shift 2             ;;
-    -b | --banner         ) banner; exit 0;  shift;                ;;
-    -c | --check-tor      ) checktor; stor;                        ;;
-
+    -l | --link-org       ) linkorg "$2" "$3"; shift 2;           ;;
+    -b | --banner         ) banner; exit 0;  shift;               ;;
+    -t | --tor-check      ) torcheck; stor;                       ;;
+    -c | --check-link     ) defvar; checktorrunning; checklink "$2" "$3"; shift          ;;
+  #  -j | --join-lists     ) banner; joinlists "$2" "$*"; shift $($#)        ;;
     esac
 fi
