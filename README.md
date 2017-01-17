@@ -7,18 +7,20 @@
 
 [+] **_Implementadas Totalmente:_**
 
-- [x] *Link Organization;*
+- [x] *Link Organization - Impressão em arquivo ou tela;*
 
 - [x] *Check Tor Installation;*
 
 - [x] *Check Link with timeout set by user;*
 
-- [x] *Unir arquivos de texto em um só.*
+- [x] *Unir arquivos de texto em um só - Impressão em arquivo ou tela.*
 
 [+] **_Implementadas Parcialmente:_**
 
 
 # History 
+
+*17/01/2017 -* Corrigida função de união de arquivos que estava sem a funcionalidade de impressão do conteúdo na tela. Trocada a flag que faz a impressão na tela de -t para -st para não haver confusão com a flag [-t| --tor-check].
 
 *17/01/2017 -* Adicionada função para união de vários arquivos de texto em um único, ou imprime o resultado na tela. Adicionado suporte à função de organização que aceita qualquer quantidade de arquivos de entrada e manda para um de destino, ou imprime o conteúdo todo na tela. Mudada a forma com que o timeout é setado para o link-check, tendo valor default (ao pressionar enter sem nada) de 20 segundos.
 
