@@ -18,6 +18,30 @@
 [+] **_Implementadas Parcialmente:_**
 
 
+
+#### Especificações de uso contidas no --help do arquivo:
+Olá! Seja bem-vindo(a) ao tópico de ajuda do Onion Checker.
+Com esse software você poderá checar se links onion estão  funcionando. Abaixo você pode ver a lista de comandos disponíveis.
+Se algum comando precisar de argumento e não for dado, o mesmo apresentará a mensagem do uso correto.
+
+>-h ou --help            Mostra essa mensagem de ajuda;
+
+>-l ou --link-org        Organiza os links de um arquivo;
+
+>-b ou --banner          Exibe o banner e sai;
+
+>-t ou --tor-check       Checa a existência do Tor no computador;
+
+>-c ou --check-link      Checa por links online e manda cria arquivo linkson.txt com os títulos e links online, caso nenhum nome destino seja dado .
+
+>-j ou --join-lists      Une arquivos contendo links ou outro conteúdo.
+
+### Compatível apenas com bash 3+. Disponível para Linux, MAC e Windows 10.
+
+#### Dependências:
+*tor   torsocks  curl    coreutils*
+
+
 # History 
 
 *17/01/2017 -* Corrigida função de união de arquivos que estava sem a funcionalidade de impressão do conteúdo na tela. Trocada a flag que faz a impressão na tela de -t para -st para não haver confusão com a flag [-t| --tor-check].
