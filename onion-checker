@@ -99,12 +99,12 @@ linkorg () { #Organiza um arquivo contendo links passados pelo usuário
 last="${@: -1}"
 if [[ "$#" == "0" ]]; then
   echo -e "\nUso: `basename $0` [-l|--link-org] [arquivos a serem organizados, separados por espaço] \
-[arquivo destino] (último arquivo tomado como destino)\n"
+[arquivo destino| -st] (último arquivo tomado como destino)(se for -st, imprime na tela)\n"
 elif [[ "$#" == "1" ]]; then
   echo -e "\nVocê esqueceu do arquivo de destino ..."
   echo -e "\n\nUso: `basename $0` [-l|--link-org] [arquivos a serem organizados, separados por espaço] \
-[arquivo destino] (último arquivo tomado como destino)\n"
-elif [[ "$#" -ge "2" ]] && [[ "$last" == "-t" ]]; then
+[arquivo destino| -st] (último arquivo tomado como destino)(se for -st, imprime na tela)\n"
+elif [[ "$#" -ge "2" ]] && [[ "$last" == "-st" ]]; then
   echo "Segundo elif"
   array="${@:1:$(($#-1))}"
   banner;
@@ -114,7 +114,7 @@ elif [[ "$#" -ge "2" ]] && [[ "$last" == "-t" ]]; then
   sed -r 's/^.*http:\/\/\040(.*\.onion).*$/\1/' |\
   sed -r 's/^(.*)(................\.onion).*$/\2/' |\
   sort -u >&1
-elif [[ "$#" -ge "2" ]] && [[ "$last" != "-t" ]];then
+elif [[ "$#" -ge "2" ]] && [[ "$last" != "-st" ]];then
   echo "Terceiro elif"
 array="${@:1:$(($#-1))}"
 banner;
@@ -205,14 +205,21 @@ fi
 }
 
 joinlists () { #Une arquivos de texto em um único arquivo
+last="${@: -1}"
   if [[ "$#" == "0" ]]; then
     echo -e "\nUso: `basename $0` [-j|--join-lists] [arquivos a serem unidos, separados por espaço]\
-    [arquivo destino]  (o último será o destino)\n"
+    [arquivo destino| -st]  (o último será o destino)(se for -st, imprime na tela)\n"
   elif [[ "$#" == "1" ]]; then
     echo -e "\nVocê esqueceu do arquivo de destino ..."
     echo -e "\n\nUso: `basename $0` [-j|--join-lists] [arquivos a serem unidos, separados por espaço]\
-    [arquivo destino]  (o último será o destino)\n"
-  else
+    [arquivo destino| -st]  (o último será o destino)(se for -st, imprime na tela)\n"
+  elif [[ "$#" -ge "2" ]] && [[ "$last" == "-st" ]]; then
+    last="${@: -1}"
+    array="${@:1:$(($#-1))}"
+    echo "Juntando o conteúdo dos arquivos ${@:1:$(($#-1))} ..."
+    echo -e "\nE imprimindo o resultado na tela"
+    cat $array >&1
+elif [[ "$#" -ge "2" ]] && [[ "$last" != "-st" ]];then
   last="${@: -1}"
   array="${@:1:$(($#-1))}"
   echo "Juntando o conteúdo dos arquivos ${@:1:$(($#-1))} ..."
@@ -253,6 +260,6 @@ if [ "$*" == "-h" ] || [ "$*" == "--help" ] || [ "$*" == "" ];
     -b | --banner         ) banner; exit 0;  shift;               ;;
     -t | --tor-check      ) torcheck; stor;                       ;;
     -c | --check-link     ) defvar; checktorrunning; checklink "$2" "$3"; shift          ;;
-    -j | --join-lists     ) shift ; joinlists "$@"; shift $# ;        ;;
+    -j | --join-lists     ) shift ; joinlists "$@" ; shift $# ;   ;;
     esac
 fi
