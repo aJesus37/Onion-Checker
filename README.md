@@ -1,22 +1,26 @@
 # Onion-Checker
-(Em Desenvolvimento)
+### (Em Desenvolvimento)
 
-Script para testar se hidden services no Tor estão em fucionamento, bem como catalogá-los de forma simples. (Funções adicionais sendo implementadas).
+##### Script para testar se hidden services no Tor estão em fucionamento, bem como catalogá-los de forma simples. (Funções adicionais sendo implementadas).
 
 # Funcionalidades
 
 [+] **_Implementadas Totalmente:_**
 
-*Link Organization;*
+- [x] *Link Organization;*
 
-*Check Tor Installation;*
+- [x] *Check Tor Installation;*
 
-*Check Link with timeout set by user.*
+- [x] *Check Link with timeout set by user;*
+
+- [x] *Unir arquivos de texto em um só.*
 
 [+] **_Implementadas Parcialmente:_**
 
 
 # History 
+
+*17/01/2017 -* Adicionada função para união de vários arquivos de texto em um único, ou imprime o resultado na tela. Adicionado suporte à função de organização que aceita qualquer quantidade de arquivos de entrada e manda para um de destino, ou imprime o conteúdo todo na tela. Mudada a forma com que o timeout é setado para o link-check, tendo valor default (ao pressionar enter sem nada) de 20 segundos.
 
 *16/01/2017 -* Função de checagem de links totalmente implementada com timeout escolhido pelo próprio usuário. Teste feito com base em função if-else com regex, bem documentada no source code; Novas implementações nos comandos de limpeza para organização de links, abrangendo gama maior nos arquivos filtrados; Documentação das novas/editadas funções.
 
