@@ -13,7 +13,9 @@
 
 - [x] *Check Link with timeout set by user;*
 
-- [x] *Unir arquivos de texto em um só - Impressão em arquivo ou tela.*
+- [x] *Unir arquivos de texto em um só - Impressão em arquivo ou tela;*
+
+- [x] *Instalar/Desinstalar o script*.
 
 [+] **_Implementadas Parcialmente:_**
 
@@ -43,6 +45,8 @@ Se algum comando precisar de argumento e não for dado, o mesmo apresentará a m
 
 
 # History 
+
+*21/01/2017 -* Adicionadas as funções de Instalar e Desinstalar o script, que transferem o mesmo para o diretório `/usr/bin`. Adicionado suporte ao bash_autocompletion, possibilitando ao usuário auto-completar suas flags ou arquivos dados como argumentos ao programa. Correção de textos imprimidos ao usuário. Adicionados mais textos para maior entendimento dos processos no decorrer do uso.
 
 *17/01/2017 -* Corrigida função de união de arquivos que estava sem a funcionalidade de impressão do conteúdo na tela. Trocada a flag que faz a impressão na tela de -t para -st para não haver confusão com a flag [-t| --tor-check].
 
