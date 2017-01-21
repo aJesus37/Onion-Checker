@@ -36,7 +36,11 @@ Se algum comando precisar de argumento e não for dado, o mesmo apresentará a m
 
 >-c ou --check-link      Checa por links online e manda cria arquivo linkson.txt com os títulos e links online, caso nenhum nome destino seja dado .
 
->-j ou --join-lists      Une arquivos contendo links ou outro conteúdo.
+>-j ou --join-lists      Une arquivos contendo links ou outro conteúdo;
+
+> --install              Transfere o script para o `PATH` dos executáveis (`/usr/bin/`);
+
+> --uninstall            Apaga qualquer versão instalada do programa.
 
 ### Compatível apenas com bash 3+. Disponível para Linux, MAC e Windows 10.
 
