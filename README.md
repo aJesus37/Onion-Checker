@@ -2,6 +2,7 @@
 ### (Em Desenvolvimento)
 
 ##### Script para testar se hidden services no Tor estão em fucionamento, bem como catalogá-los de forma simples. (Funções adicionais sendo implementadas).
+###### Você pode encontrar um tutorial compreensivo desse programa [nesse link](https://jesusfromhellz.github.io/The-Onion-Checker/)
 
 # Funcionalidades
 
